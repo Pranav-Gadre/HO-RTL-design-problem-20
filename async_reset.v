@@ -8,34 +8,56 @@ module async_reset (
 );
 
   // Write your logic here...
-	reg [2:0] count;
-	reg [2:0] count_b;
+	reg [4:0] count;
+	reg [4:0] count_store;
 	reg       release_reset;
+	reg       gate_clk;
 	
 	assign release_reset_o = release_reset;
-	assign gate_clk_o      = release_reset & clk;
+	assign gate_clk_o      = gate_clk;
 	
 	always @ (posedge clk or posedge reset) begin 
 		if (reset) begin 
-			if (count >= 0) 
-				count <= (clk & (count <= 7)) ? count + 1 : count;
-			else 
-				count <= 0;
-			count_b <= 0;
+			count_store <= 0;
 		end else begin 
-			count <= 0;
-			if (count_b <= 7)
-				count_b <= count_b + 1;
+			count_store <= count;
+		end 
+	end
+	
+	always @ (*) begin 
+		if (reset) begin 
+			count = 0;
+		end else begin 
+			if (count_store < 20) 
+				count = count_store + 1;
 			else 
-				count_b <= count_b;
+				count = count_store;
 		end 
 	end 
 	
-	always @ (posedge clk or posedge reset) begin 
-		if (reset) begin 
-			release_reset <= (count >= 4) ? 0 : 1;
+	always @ (*) begin 
+		if (reset) begin  
+			release_reset = 0;
+		end else if (count >= 12) begin 
+			release_reset = 1;
+		end else if (count < 12) begin 
+			release_reset = 0;
 		end else begin 
-			release_reset <= (count_b == 7) ? 1 : 0;
+			release_reset = 1;
+		end 
+	end 
+	
+	always @ (*) begin 
+		if (reset) begin 
+			gate_clk = 0;
+		end else if (count < 5) begin 
+			gate_clk = 0;
+		end else if (count < 18) begin 
+			gate_clk = 1;
+		end else if (count >= 18) begin 
+			gate_clk = 0;
+		end else begin 
+			gate_clk = 0;
 		end 
 	end 
 

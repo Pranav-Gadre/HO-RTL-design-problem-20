@@ -38,9 +38,9 @@ module async_reset (
 	always @ (*) begin 
 		if (reset) begin  
 			release_reset = 0;
-		end else if (count >= 12) begin 
+		end else if (count >= 11) begin 
 			release_reset = 1;
-		end else if (count < 12) begin 
+		end else if (count < 11) begin 
 			release_reset = 0;
 		end else begin 
 			release_reset = 1;

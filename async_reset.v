@@ -24,21 +24,15 @@ module async_reset (
 		end 
 	end
 	
-	always @ (*) begin 
-		if (reset) begin 
-			count = 0;
-		end else begin 
-			if (count_store < 20) 
-				count = count_store + 1;
-			else 
-				count = count_store;
-		end 
+	always @ (*) begin  
+		if (count_store < 20) 
+			count = count_store + 1;
+		else 
+			count = count_store;
 	end 
 	
 	always @ (*) begin 
-		if (reset) begin  
-			release_reset = 0;
-		end else if (count >= 11) begin 
+		if (count >= 11) begin 
 			release_reset = 1;
 		end else if (count < 11) begin 
 			release_reset = 0;
@@ -48,9 +42,7 @@ module async_reset (
 	end 
 	
 	always @ (*) begin 
-		if (reset) begin 
-			gate_clk = 0;
-		end else if (count < 5) begin 
+		if (count < 5) begin 
 			gate_clk = 0;
 		end else if (count < 18) begin 
 			gate_clk = 1;
